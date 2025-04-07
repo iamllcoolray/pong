@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.title = "New Game"
+    t.title = "Pong"
 
     t.version = "11.5"
 

@@ -1,1 +1,3 @@
-# LÖVE2D Project Template
+# Pong
+
+Made with LÖVE2D
