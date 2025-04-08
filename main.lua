@@ -16,9 +16,7 @@ function love.load()
         speed = 200,
     }
 
-    player.load()
-    enemy.load()
-    ball.load()
+    load()
 end
 
 function love.update(dt)
@@ -36,10 +34,18 @@ end
 function love.resize(w, h)
     screen.width = w
     screen.height = h
+
+    load()
 end
 
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
     end
+end
+
+function load()
+    player.load()
+    enemy.load()
+    ball.load()
 end
