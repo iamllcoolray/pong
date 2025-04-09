@@ -11,6 +11,7 @@ end
 
 function player.update(dt)
     player.movement(dt)
+    checkPaddleBoundaries(player)
 end
 
 function player.draw()

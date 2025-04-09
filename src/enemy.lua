@@ -10,7 +10,7 @@ function enemy.load()
 end
 
 function enemy.update(dt)
-
+    checkPaddleBoundaries(enemy)
 end
 
 function enemy.draw()

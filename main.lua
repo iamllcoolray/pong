@@ -57,3 +57,11 @@ function checkCollision(a, b)
         a.y < b.y + b.height and
         b.y < a.y + a.height
 end
+
+function checkPaddleBoundaries(a)
+    if a.y < 0 then
+        a.y = 0
+    elseif a.y + a.height > screen.height then
+        a.y = screen.height - a.height
+    end
+end
