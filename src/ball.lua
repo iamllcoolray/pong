@@ -7,8 +7,10 @@ function ball.load()
     ball.speedX = randomStartDirection()
     ball.speedY = randomStartDirection()
     ball.velocity = 1
-    ball.x = (screen.width - ball.width) / 2
-    ball.y = (screen.height - ball.height) / 2
+    ball.startX = (screen.width - ball.width) / 2
+    ball.startY = (screen.height - ball.height) / 2
+    ball.x = ball.startX
+    ball.y = ball.startY
 end
 
 function ball.update(dt)
@@ -48,7 +50,14 @@ function randomStartDirection()
 end
 
 function checkBallBoundaries(dt)
-    -- Bounce off top and bottom
+    if ball.x + ball.radius < 0 then
+        ball.x = ball.startX
+        ball.y = ball.startY
+    elseif ball.x - ball.radius > screen.width then
+        ball.x = ball.startX
+        ball.y = ball.startY
+    end
+
     if ball.y - ball.radius < 0 then
         ball.speedY = -ball.speedY
     elseif ball.y + ball.radius > screen.height then
