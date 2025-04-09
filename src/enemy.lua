@@ -1,8 +1,12 @@
 enemy = {}
 
 function enemy.load()
-    enemy.x = paddle.width - 20
-    enemy.y = (screen.height - paddle.height) / 2
+    enemy.width = paddle.width
+    enemy.height = paddle.height
+    enemy.x = enemy.width - 20
+    enemy.y = (screen.height - enemy.height) / 2
+    enemy.score = 0
+    enemy.speed = paddle.speed
 end
 
 function enemy.update(dt)
@@ -10,5 +14,5 @@ function enemy.update(dt)
 end
 
 function enemy.draw()
-    love.graphics.rectangle("fill", enemy.x, enemy.y, paddle.width, paddle.height)
+    love.graphics.rectangle("fill", enemy.x, enemy.y, enemy.width, enemy.height)
 end

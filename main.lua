@@ -14,6 +14,7 @@ function love.load()
         width = 40,
         height = 120,
         speed = 200,
+        hits = 0,
     }
 
     load()
@@ -48,4 +49,11 @@ function load()
     player.load()
     enemy.load()
     ball.load()
+end
+
+function checkCollision(a, b)
+    return a.x < b.x + b.width and
+        b.x < a.x + a.width and
+        a.y < b.y + b.height and
+        b.y < a.y + a.height
 end

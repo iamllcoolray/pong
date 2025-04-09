@@ -1,8 +1,12 @@
 player = {}
 
 function player.load()
-    player.x = (screen.width - paddle.width) - 20
-    player.y = (screen.height - paddle.height) / 2
+    player.width = paddle.width
+    player.height = paddle.height
+    player.x = (screen.width - player.width) - 20
+    player.y = (screen.height - player.height) / 2
+    player.score = 0
+    player.speed = paddle.speed
 end
 
 function player.update(dt)
@@ -10,15 +14,15 @@ function player.update(dt)
 end
 
 function player.draw()
-    love.graphics.rectangle("fill", player.x, player.y, paddle.width, paddle.height)
+    love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
 end
 
 function player.movement(dt)
     if love.keyboard.isDown("up") then
-        player.y = player.y - paddle.speed * dt
+        player.y = player.y - player.speed * dt
     end
 
     if love.keyboard.isDown("down") then
-        player.y = player.y + paddle.speed * dt
+        player.y = player.y + player.speed * dt
     end
 end
