@@ -29,6 +29,8 @@ public class Game1 : Game
     private int scoreLeft, scoreRight;
     private const int MAX_TOTAL_SCORE = 5;
     
+    private bool isPlaying = false;
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -57,16 +59,25 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        keyboardState = Keyboard.GetState();
+        
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+        
+        if (keyboardState.IsKeyDown(Keys.P))
+            isPlaying = !isPlaying;
 
         // TODO: Add your update logic here
-        PaddleMovement(gameTime);
-        AIPaddleMovement(gameTime);
-        BallMovement(gameTime);
+        if (isPlaying)
+        {
+            PaddleMovement(gameTime);
+            AIPaddleMovement(gameTime);
+            BallMovement(gameTime);
+            
+            IsGameOver();
+        }
         
-        IsGameOver();
         
         base.Update(gameTime);
     }
@@ -182,8 +193,6 @@ public class Game1 : Game
     }
     private void PaddleMovement(GameTime gameTime)
     {
-        keyboardState = Keyboard.GetState();
-        
         if (keyboardState.IsKeyDown(Keys.W))
         {
             paddleLeft.Y -= (int)paddleSpeed * gameTime.ElapsedGameTime.Milliseconds;
@@ -254,10 +263,12 @@ public class Game1 : Game
     {
         if (scoreLeft >= MAX_TOTAL_SCORE)
         {
+            isPlaying = false;
             StartGame();
         }
         else if (scoreRight >= MAX_TOTAL_SCORE)
         {
+            isPlaying = false;
             StartGame();
         }
     }
