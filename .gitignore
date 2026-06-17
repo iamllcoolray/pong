@@ -168,3 +168,7 @@ Thumbs.db              # Windows Explorer metadata
 # Editor-Specific (Optional)
 # Uncomment if you do not use EditorConfig.
 # .editorconfig
+
+.idea/
+.vscode/
+.config/
