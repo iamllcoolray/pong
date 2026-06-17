@@ -109,6 +109,7 @@ public class Game1 : Game
     private void BallMovement(GameTime gameTime)
     {
         const float MAX_VELOCITY = 1.5f;
+        const float MAX_SPEED = 8.0f;
 
         if (ballVelocity.X > MAX_VELOCITY)
         {
@@ -128,28 +129,31 @@ public class Game1 : Game
             ballVelocity.Y = -MAX_VELOCITY;
         }
         
-        
+        ballVelocity.X = Math.Clamp(ballVelocity.X, -MAX_SPEED, MAX_SPEED);
+        ballVelocity.Y = Math.Clamp(ballVelocity.Y, -MAX_SPEED, MAX_SPEED);
+
         ballPosition.X += ballVelocity.X * ballSpeed * gameTime.ElapsedGameTime.Milliseconds;
         ballPosition.Y += ballVelocity.Y * ballSpeed * gameTime.ElapsedGameTime.Milliseconds;
 
-        hitCounter++;
-        if (hitCounter > 10)
-        {
-            if (paddleLeft.Intersects(ball))
-            {
-                ballVelocity.X *= -1;
-                ballVelocity.Y *= 1.1f;
-                hitCounter = 0;
-                ballPosition.X = paddleLeft.X + paddleLeft.Width + 10;
-            }
+        // Keep ball rect in sync HERE, not just in Draw()
+        ball.X = (int)ballPosition.X;
+        ball.Y = (int)ballPosition.Y;
 
-            if (paddleRight.Intersects(ball))
-            {
-                ballVelocity.X *= -1;
-                ballVelocity.Y *= 1.1f;
-                hitCounter = 0;
-                ballPosition.X = paddleRight.X - 10;
-            }
+        // Paddle collisions — no frame counter needed
+        if (ball.Intersects(paddleLeft) && ballVelocity.X < 0)
+        {
+            ballVelocity.X = Math.Abs(ballVelocity.X); // always bounce right
+            ballVelocity.Y = Math.Clamp(ballVelocity.Y * 1.1f, -MAX_SPEED, MAX_SPEED);
+            ballPosition.X = paddleLeft.X + paddleLeft.Width + 1;
+            ball.X = (int)ballPosition.X;
+        }
+
+        if (ball.Intersects(paddleRight) && ballVelocity.X > 0)
+        {
+            ballVelocity.X = -Math.Abs(ballVelocity.X); // always bounce left
+            ballVelocity.Y = Math.Clamp(ballVelocity.Y * 1.1f, -MAX_SPEED, MAX_SPEED);
+            ballPosition.X = paddleRight.X - ball.Width - 1;
+            ball.X = (int)ballPosition.X;
         }
         
         if (ballPosition.X < 0)
