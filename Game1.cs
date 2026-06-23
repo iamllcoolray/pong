@@ -43,6 +43,8 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         Window.Title = "Pong";
+        Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += OnResize;
         _graphics.PreferredBackBufferWidth = gameBounds.X;
         _graphics.PreferredBackBufferHeight = gameBounds.Y;
         _graphics.ApplyChanges();
@@ -54,7 +56,7 @@ public class Game1 : Game
         // TODO: Add your initialization logic here
         isPlaying = false;
         isStart = false;
-
+        
         base.Initialize();
     }
 
@@ -78,7 +80,7 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
+        
         if (WasKeyPressed(Keys.P))
         {
             isPlaying = !isPlaying;
@@ -116,7 +118,7 @@ public class Game1 : Game
         }
         else
         {
-            _spriteBatch.DrawString(_spriteFont, pauseMessage, new Vector2((gameBounds.X - pauseMessageMeasure.X) / 2, (gameBounds.Y - pauseMessageMeasure.Y) / 2), Color.White);
+            _spriteBatch.DrawString(_spriteFont, pauseMessage, new Vector2((gameBounds.X - pauseMessageMeasure.X) - 30, (gameBounds.Y - pauseMessageMeasure.Y) - (gameBounds.Y - 30)), Color.White);
             
             int total = gameBounds.Y / 20;
             for (int i = 0; i < total; i++)
@@ -145,6 +147,27 @@ public class Game1 : Game
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+    
+    private void OnResize(object sender, EventArgs e)
+    {
+        gameBounds.X = Window.ClientBounds.Width;
+        gameBounds.Y = Window.ClientBounds.Height;
+
+        _graphics.PreferredBackBufferWidth  = gameBounds.X;
+        _graphics.PreferredBackBufferHeight = gameBounds.Y;
+        _graphics.ApplyChanges();
+
+        if (_spriteFont == null) return;  // <-- not loaded yet, bail early
+
+        startMessageMeasure  = _spriteFont.MeasureString(startMessage);
+        resumeMessageMeasure = _spriteFont.MeasureString(resumeMessage);
+        pauseMessageMeasure  = _spriteFont.MeasureString(pauseMessage);
+        
+        paddleRight.X = gameBounds.X - 30;
+        
+        PaddleBoundsLimiter(ref paddleLeft);
+        PaddleBoundsLimiter(ref paddleRight);
     }
     
     bool WasKeyPressed(Keys key) => keyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key);
