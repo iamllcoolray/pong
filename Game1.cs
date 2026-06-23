@@ -24,8 +24,6 @@ public class Game1 : Game
     private Texture2D texture;
     
     private Random random = new Random();
-
-    private byte hitCounter = 0;
     
     private int scoreLeft, scoreRight;
     private const int MAX_TOTAL_SCORE = 5;
@@ -112,13 +110,16 @@ public class Game1 : Game
         {
             _spriteBatch.DrawString(_spriteFont, startMessage, new Vector2((gameBounds.X - startMessageMeasure.X) / 2, (gameBounds.Y - startMessageMeasure.Y) / 2), Color.White);
         }
-        else if (!isPlaying && isStart)
-        {
-            _spriteBatch.DrawString(_spriteFont, resumeMessage, new Vector2((gameBounds.X - resumeMessageMeasure.X) / 2, (gameBounds.Y - resumeMessageMeasure.Y) / 2), Color.White);
-        }
         else
         {
-            _spriteBatch.DrawString(_spriteFont, pauseMessage, new Vector2((gameBounds.X - pauseMessageMeasure.X) - 30, (gameBounds.Y - pauseMessageMeasure.Y) - (gameBounds.Y - 30)), Color.White);
+            if (!isPlaying && isStart)
+            {
+                _spriteBatch.DrawString(_spriteFont, resumeMessage, new Vector2((gameBounds.X - resumeMessageMeasure.X) - 30, (gameBounds.Y - resumeMessageMeasure.Y) - (gameBounds.Y - 30)), Color.White);
+            }
+            else
+            {
+                _spriteBatch.DrawString(_spriteFont, pauseMessage, new Vector2((gameBounds.X - pauseMessageMeasure.X) - 30, (gameBounds.Y - pauseMessageMeasure.Y) - (gameBounds.Y - 30)), Color.White);   
+            }
             
             int total = gameBounds.Y / 20;
             for (int i = 0; i < total; i++)
