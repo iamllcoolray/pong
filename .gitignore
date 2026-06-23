@@ -172,3 +172,4 @@ Thumbs.db              # Windows Explorer metadata
 .idea/
 .vscode/
 .config/
+release/
