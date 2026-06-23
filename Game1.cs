@@ -9,10 +9,11 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private SpriteFont _spriteFont;
 
     private Point gameBounds = new Point(1280, 720);
     
-    private KeyboardState keyboardState;
+    private KeyboardState previousKeyboardState, keyboardState;
     
     private Rectangle paddleLeft, paddleRight, ball;
     private float paddleSpeed = 1.0f;
@@ -28,8 +29,14 @@ public class Game1 : Game
     
     private int scoreLeft, scoreRight;
     private const int MAX_TOTAL_SCORE = 5;
-    
-    private bool isPlaying = false;
+
+    private bool isPlaying;
+    private bool isStart;
+
+    private readonly string startMessage = "Press \"P\" to Start!";
+    private readonly string resumeMessage = "Press \"P\" to Resume!";
+    private readonly string pauseMessage = "Press \"P\" to Pause!";
+    private Vector2 startMessageMeasure, resumeMessageMeasure, pauseMessageMeasure;
     
     public Game1()
     {
@@ -45,6 +52,8 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        isPlaying = false;
+        isStart = false;
 
         base.Initialize();
     }
@@ -54,19 +63,27 @@ public class Game1 : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // TODO: use this.Content to load your game content here
+        _spriteFont = Content.Load<SpriteFont>("Fonts/PressStart2P");
+        startMessageMeasure = _spriteFont.MeasureString(startMessage);
+        resumeMessageMeasure = _spriteFont.MeasureString(resumeMessage);
+        pauseMessageMeasure = _spriteFont.MeasureString(pauseMessage);
         StartGame();
     }
 
     protected override void Update(GameTime gameTime)
     {
+        previousKeyboardState = keyboardState;
         keyboardState = Keyboard.GetState();
         
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-        
-        if (keyboardState.IsKeyDown(Keys.P))
+
+        if (WasKeyPressed(Keys.P))
+        {
             isPlaying = !isPlaying;
+            isStart = true;   
+        }
 
         // TODO: Add your update logic here
         if (isPlaying)
@@ -89,33 +106,48 @@ public class Game1 : Game
         // TODO: Add your drawing code here
         _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-        int total = gameBounds.Y / 20;
-        for (int i = 0; i < total; i++)
+        if (!isPlaying && !isStart)
         {
-            DrawRectangle(_spriteBatch, new Rectangle(gameBounds.X / 2 - 4, 5 + (i * 20), 8 , 8), Color.White);
+            _spriteBatch.DrawString(_spriteFont, startMessage, new Vector2((gameBounds.X - startMessageMeasure.X) / 2, (gameBounds.Y - startMessageMeasure.Y) / 2), Color.White);
         }
-        
-        DrawRectangle(_spriteBatch, paddleLeft, Color.White);
-        DrawRectangle(_spriteBatch, paddleRight, Color.White);
-
-        ball.X = (int)ballPosition.X;
-        ball.Y = (int)ballPosition.Y;
-        DrawRectangle(_spriteBatch, ball, Color.White);
-
-        for (int i = 0; i < scoreLeft; i++)
+        else if (!isPlaying && isStart)
         {
-            DrawRectangle(_spriteBatch, new Rectangle((gameBounds.X / 2 - 25) - i * 12, 10, 10, 10), Color.White);
+            _spriteBatch.DrawString(_spriteFont, resumeMessage, new Vector2((gameBounds.X - resumeMessageMeasure.X) / 2, (gameBounds.Y - resumeMessageMeasure.Y) / 2), Color.White);
         }
-        
-        for (int i = 0; i < scoreRight; i++)
+        else
         {
-            DrawRectangle(_spriteBatch, new Rectangle((gameBounds.X / 2 + 15) + i * 12, 10, 10, 10), Color.White);
+            _spriteBatch.DrawString(_spriteFont, pauseMessage, new Vector2((gameBounds.X - pauseMessageMeasure.X) / 2, (gameBounds.Y - pauseMessageMeasure.Y) / 2), Color.White);
+            
+            int total = gameBounds.Y / 20;
+            for (int i = 0; i < total; i++)
+            {
+                DrawRectangle(_spriteBatch, new Rectangle(gameBounds.X / 2 - 4, 5 + (i * 20), 8 , 8), Color.White);
+            }
+        
+            DrawRectangle(_spriteBatch, paddleLeft, Color.White);
+            DrawRectangle(_spriteBatch, paddleRight, Color.White);
+
+            ball.X = (int)ballPosition.X;
+            ball.Y = (int)ballPosition.Y;
+            DrawRectangle(_spriteBatch, ball, Color.White);
+
+            for (int i = 0; i < scoreLeft; i++)
+            {
+                DrawRectangle(_spriteBatch, new Rectangle((gameBounds.X / 2 - 25) - i * 12, 10, 10, 10), Color.White);
+            }
+        
+            for (int i = 0; i < scoreRight; i++)
+            {
+                DrawRectangle(_spriteBatch, new Rectangle((gameBounds.X / 2 + 15) + i * 12, 10, 10, 10), Color.White);
+            }
         }
         
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
+    
+    bool WasKeyPressed(Keys key) => keyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key);
     
     private void BallMovement(GameTime gameTime)
     {
@@ -264,11 +296,13 @@ public class Game1 : Game
         if (scoreLeft >= MAX_TOTAL_SCORE)
         {
             isPlaying = false;
+            isStart = false;
             StartGame();
         }
         else if (scoreRight >= MAX_TOTAL_SCORE)
         {
             isPlaying = false;
+            isStart = false;
             StartGame();
         }
     }
