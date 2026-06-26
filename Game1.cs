@@ -1,7 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace pong;
 
@@ -36,6 +38,9 @@ public class Game1 : Game
     private readonly string pauseMessage = "Press \"P\" to Pause!";
     private Vector2 startMessageMeasure, resumeMessageMeasure, pauseMessageMeasure;
     
+    private Song _backgroundMusic;
+    private SoundEffect _beepSoundEffect, _peepSoundEffect;
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -67,6 +72,15 @@ public class Game1 : Game
         startMessageMeasure = _spriteFont.MeasureString(startMessage);
         resumeMessageMeasure = _spriteFont.MeasureString(resumeMessage);
         pauseMessageMeasure = _spriteFont.MeasureString(pauseMessage);
+        
+        _backgroundMusic = Content.Load<Song>("Audio/pong");
+        MediaPlayer.IsRepeating = true;
+        MediaPlayer.Volume = 0.5f;
+        MediaPlayer.Play(_backgroundMusic);
+        
+        _beepSoundEffect = Content.Load<SoundEffect>("Audio/beep");
+        _peepSoundEffect = Content.Load<SoundEffect>("Audio/peep");
+        
         StartGame();
     }
 
@@ -213,6 +227,7 @@ public class Game1 : Game
             ballVelocity.Y = Math.Clamp(ballVelocity.Y * 1.1f, -MAX_SPEED, MAX_SPEED);
             ballPosition.X = paddleLeft.X + paddleLeft.Width + 1;
             ball.X = (int)ballPosition.X;
+            _beepSoundEffect.Play(volume: 0.8f, pitch: 0.0f, pan: 0.0f);
         }
 
         if (ball.Intersects(paddleRight) && ballVelocity.X > 0)
@@ -221,6 +236,7 @@ public class Game1 : Game
             ballVelocity.Y = Math.Clamp(ballVelocity.Y * 1.1f, -MAX_SPEED, MAX_SPEED);
             ballPosition.X = paddleRight.X - ball.Width - 1;
             ball.X = (int)ballPosition.X;
+            _beepSoundEffect.Play(volume: 0.8f, pitch: 0.0f, pan: 0.0f);
         }
         
         if (ballPosition.X < 0)
@@ -228,12 +244,14 @@ public class Game1 : Game
             ballPosition.X = ballSpeed + 1;
             ballVelocity.X *= -1;
             scoreRight++;
+            _peepSoundEffect.Play(volume: 0.8f, pitch: 0.0f, pan: 0.0f);
         }
         else if (ballPosition.X > gameBounds.X)
         {
             ballPosition.X = ballSpeed + gameBounds.X - 1;
             ballVelocity.X *= -1;
             scoreLeft++;
+            _peepSoundEffect.Play(volume: 0.8f, pitch: 0.0f, pan: 0.0f);
         }
 
         if (ballPosition.Y < 0 + 10)
